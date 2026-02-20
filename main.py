@@ -33,7 +33,7 @@ def main(page: ft.Page):
                             height=150,
                             width=360, # CRITICAL: Hardcoded width instead of float("inf")
                             fit="cover", # FIX: Use string shorthand instead of the deprecated ImageFit
-                            border_radius=ft.border_radius.only(top_left=10, top_right=10)
+                            border_radius=ft.BorderRadius.only(top_left=10, top_right=10)
                         ),
                         # Recipe Info
                         ft.Container(
