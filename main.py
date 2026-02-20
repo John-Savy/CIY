@@ -71,15 +71,15 @@ def main(page: ft.Page):
 )
 
     # 4. Bottom Navigation Bar
-    page.navigation_bar = ft.NavigationBar(
-        destinations=[
-            # Using ft.NavigationBarDestination and string-based icons
-            ft.NavigationBarDestination(icon="home_outlined", selected_icon="home", label="Menu"),
-            ft.NavigationBarDestination(icon="receipt_long_outlined", selected_icon="receipt_long", label="My Deliveries"),
-            ft.NavigationBarDestination(icon="person_outline", selected_icon="person", label="Profile"),
-        ],
-        selected_index=0,
-    )
+    page.navigation_bar = ft.NavigationBarDestination(
+    bgcolor=ft.Colors.WHITE, # Keeps the bottom part clean
+    destinations=[
+        ft.NavigationBarDestination(icon=ft.icons.RESTAURANT, selected_icon=ft.icons.RESTAURANT, label="Menu"),
+        ft.NavigationBarDestination(icon=ft.icons.LOCAL_SHIPPING, label="Deliveries"),
+        ft.NavigationBarDestination(icon=ft.icons.PERSON, label="Profile"),
+    ],
+    selected_index=0,
+)
 
     # 5. Mount UI
     page.add(recipe_feed)
