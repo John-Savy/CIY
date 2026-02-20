@@ -12,10 +12,9 @@ def main(page: ft.Page):
     page.title = "FreshMeals MVP"
     page.theme_mode = ft.ThemeMode.LIGHT
     page.padding = 0
+    page.bgcolor = ft.Colors.WHITE
     page.window.width = 400   # Hardcoding mobile dimensions
     page.window.height = 800
-    
-    # CRITICAL: Native Scrolling (Avoids nested ListView layout crashes on your Vivobook)
     page.scroll = "auto"
 
     # 2. Reusable UI Component: Recipe Card
@@ -24,6 +23,7 @@ def main(page: ft.Page):
             elevation=2,
             margin=10, # Flet 0.80+: Use simple numbers for margin
             content=ft.Container(
+                bgcolor=ft.Colors.WHITE,
                 padding=0,
                 content=ft.Column(
                     controls=[
