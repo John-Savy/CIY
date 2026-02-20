@@ -1,6 +1,6 @@
 import flet as ft
 
-# 1. Mock Data (Dummy Recipes to make it look real without a database)
+# 1. Mock Data (MVP Stage)
 RECIPES = [
     {"title": "Spicy Garlic Tomato Pasta", "time": "25 min", "cal": "650 kcal", "image": "https://images.unsplash.com/photo-1555072956-7758afb20e8f?auto=format&fit=crop&w=300&q=80"},
     {"title": "Honey Glazed Salmon", "time": "35 min", "cal": "550 kcal", "image": "https://images.unsplash.com/photo-1467003909585-2f8a72700288?auto=format&fit=crop&w=300&q=80"},
@@ -8,17 +8,21 @@ RECIPES = [
 ]
 
 def main(page: ft.Page):
-    # App Settings
+    # App Settings & Mobile Hardware Simulation
     page.title = "FreshMeals MVP"
     page.theme_mode = ft.ThemeMode.LIGHT
     page.padding = 0
+    page.window.width = 400   # Hardcoding mobile dimensions
+    page.window.height = 800
+    
+    # CRITICAL: Native Scrolling (Avoids nested ListView layout crashes on your Vivobook)
+    page.scroll = "auto"
 
     # 2. Reusable UI Component: Recipe Card
-    # This keeps our code modular and clean for your 8GB Vivobook
     def create_recipe_card(recipe):
         return ft.Card(
             elevation=2,
-            margin=ft.margin.all(10),
+            margin=10, # Flet 0.80+: Use simple numbers for margin
             content=ft.Container(
                 padding=0,
                 content=ft.Column(
@@ -27,20 +31,21 @@ def main(page: ft.Page):
                         ft.Image(
                             src=recipe["image"],
                             height=150,
-                            width=float("inf"),
-                            fit=ft.ImageFit.COVER,
+                            width=360, # CRITICAL: Hardcoded width instead of float("inf")
+                            fit="cover", # FIX: Use string shorthand instead of the deprecated ImageFit
                             border_radius=ft.border_radius.only(top_left=10, top_right=10)
                         ),
-                        # Recipe Info (Title, Time, Calories)
+                        # Recipe Info
                         ft.Container(
                             padding=10,
                             content=ft.Column([
                                 ft.Text(recipe["title"], weight=ft.FontWeight.BOLD, size=16),
                                 ft.Row([
-                                    ft.Icon(ft.icons.ACCESS_TIME, size=14, color=ft.colors.GREY),
-                                    ft.Text(recipe["time"], color=ft.colors.GREY, size=12),
-                                    ft.Icon(ft.icons.LOCAL_FIRE_DEPARTMENT, size=14, color=ft.colors.ORANGE),
-                                    ft.Text(recipe["cal"], color=ft.colors.GREY, size=12),
+                                    # Flet 0.80+: Use simple lowercase strings for Material Icons and Colors
+                                    ft.Icon("access_time", size=14, color="grey"),
+                                    ft.Text(recipe["time"], color="grey", size=12),
+                                    ft.Icon("local_fire_department", size=14, color="orange"),
+                                    ft.Text(recipe["cal"], color="grey", size=12),
                                 ], spacing=5)
                             ])
                         )
@@ -50,27 +55,30 @@ def main(page: ft.Page):
             )
         )
 
-    # 3. Main Content Area (Scrollable Feed)
-    recipe_feed = ft.ListView(
-        expand=True,
-        padding=ft.padding.all(10),
+    # 3. Main Content Area (Standard Column instead of ListView)
+    recipe_feed = ft.Column(
         controls=[
-            ft.Text("This Week's Menu", size=22, weight=ft.FontWeight.BOLD), 
-            *[create_recipe_card(r) for r in RECIPES] # Generates a card for every recipe
+            ft.Container(
+                padding=10,
+                content=ft.Text("This Week's Menu", size=22, weight=ft.FontWeight.BOLD)
+            ), 
+            *[create_recipe_card(r) for r in RECIPES]
         ]
     )
 
-    # 4. Bottom Navigation Bar (HelloFresh style)
+    # 4. Bottom Navigation Bar
     page.navigation_bar = ft.NavigationBar(
         destinations=[
-            ft.NavigationDestination(icon=ft.icons.HOME_OUTLINED, selected_icon=ft.icons.HOME, label="Menu"),
-            ft.NavigationDestination(icon=ft.icons.RECEIPT_LONG_OUTLINED, selected_icon=ft.icons.RECEIPT_LONG, label="My Deliveries"),
-            ft.NavigationDestination(icon=ft.icons.PERSON_OUTLINE, selected_icon=ft.icons.PERSON, label="Profile"),
+            # Using ft.NavigationBarDestination and string-based icons
+            ft.NavigationBarDestination(icon="home_outlined", selected_icon="home", label="Menu"),
+            ft.NavigationBarDestination(icon="receipt_long_outlined", selected_icon="receipt_long", label="My Deliveries"),
+            ft.NavigationBarDestination(icon="person_outline", selected_icon="person", label="Profile"),
         ],
         selected_index=0,
     )
 
-    # 5. Add everything to the screen
+    # 5. Mount UI
     page.add(recipe_feed)
 
-ft.app(target=main)
+# FIX: Use ft.run() instead of the deprecated ft.app()
+ft.run(main)
