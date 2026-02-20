@@ -56,15 +56,19 @@ def main(page: ft.Page):
         )
 
     # 3. Main Content Area (Standard Column instead of ListView)
-    recipe_feed = ft.Column(
-        controls=[
-            ft.Container(
-                padding=10,
-                content=ft.Text("This Week's Menu", size=22, weight=ft.FontWeight.BOLD)
-            ), 
-            *[create_recipe_card(r) for r in RECIPES]
-        ]
-    )
+    recipe_feed = ft.Column( # Use Column with scroll instead of ListView for better stability
+    expand=True,
+    scroll=ft.ScrollMode.AUTO, # Explicitly tells Flet to only scroll if content exists
+    spacing=10,
+    controls=[
+        ft.Container(
+            padding=ft.Padding.only(left=10, top=20, bottom=10),
+            content=ft.Text("This Week's Menu", size=26, weight=ft.FontWeight.BOLD)
+        ),
+        # Generates only the cards present in your RECIPES data
+        *[create_recipe_card(r) for r in RECIPES] 
+    ]
+)
 
     # 4. Bottom Navigation Bar
     page.navigation_bar = ft.NavigationBar(
@@ -79,6 +83,7 @@ def main(page: ft.Page):
 
     # 5. Mount UI
     page.add(recipe_feed)
+    page.update() # CRITICAL: This snaps the scrollbar to the actual content height
 
 # FIX: Use ft.run() instead of the deprecated ft.app()
 ft.run(main)
